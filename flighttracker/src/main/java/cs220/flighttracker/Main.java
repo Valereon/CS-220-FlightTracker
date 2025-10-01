@@ -25,7 +25,6 @@ public class Main {
                 System.out.println("------------------------");
                 
             }
-            System.out.println("hi");
 
         } catch (Exception e) {
             e.printStackTrace();
