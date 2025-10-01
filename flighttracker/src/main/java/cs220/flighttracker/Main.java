@@ -23,7 +23,9 @@ public class Main {
                 System.out.println("Altitude: " + s.getGeoAltitude());
                 System.out.println("Velocity: " + s.getVelocity());
                 System.out.println("------------------------");
+                
             }
+            System.out.println("hi");
 
         } catch (Exception e) {
             e.printStackTrace();
