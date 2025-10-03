@@ -10,14 +10,14 @@ public class Main {
 
         try {
             // Define parameters
-            int time = 0; // 0 = latest
-            String[] icao24 = null; // null = all aircraft
-            OpenSkyApi.BoundingBox bbox = null; // null = no bounding box filter
+            int time = 0; // 0 = current time
+            String[] icao24 = null; // null = all aircrafts in hexcode
+            OpenSkyApi.BoundingBox bbox = null; // null = no bounding box (aka geographical state vector)
 
             OpenSkyStates states = api.getStates(time, icao24, bbox);
 
             for (StateVector s : states.getStates()) {
-                System.out.println("ICAO24: " + s.getIcao24());
+                System.out.println("Flight Number (in hex): " + s.getIcao24());
                 System.out.println("Latitude: " + s.getLatitude());
                 System.out.println("Longitude: " + s.getLongitude());
                 System.out.println("Altitude: " + s.getGeoAltitude());
