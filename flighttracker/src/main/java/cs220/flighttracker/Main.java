@@ -4,7 +4,17 @@ import org.opensky.api.OpenSkyApi;
 import org.opensky.model.StateVector;
 import org.opensky.model.OpenSkyStates;
 
+/**
+ * Gets the current state of the flight tracker data
+ * @author Maxwell Warren
+ * @author Logan Surber
+ * @author Malayna Vest
+ * @author Litzy Garcia
+ */
 public class Main {
+    /**
+     * 
+     */
     public static void main(String[] args) {
         OpenSkyApi api = new OpenSkyApi(); //anon access
 
@@ -25,7 +35,6 @@ public class Main {
                 System.out.println("------------------------");
                 
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
