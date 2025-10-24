@@ -44,6 +44,12 @@ public class Main {
         }
     }
 
+    /**
+     * Displays a menu for the user to use, and then based on their answer will display flights by flight number or by state
+     * @param scanner
+     * @param stateVectors
+     * @param actualStates
+     */
     private static void UserSearchAndDisplay(Scanner scanner, List<StateVector> stateVectors, List<RealState> actualStates) {
         String out = "0";
         while (!out.equals("1") && !out.equals("2")) {
@@ -58,28 +64,50 @@ public class Main {
             GetAndDisplayFlightByNumber(stateVectors, flightNumber);
 
         } else {
-            String realState = GetUserInput("Please enter one of the 50 us states", scanner);
+            String realState = GetUserInput("Please enter one of the 50 us state\n>", scanner);
             GetAndDisplayFlightByState(realState, stateVectors, actualStates);
         }
     }
 
+    /**
+     * Gets and displays flight by number
+     * @param stateVectors
+     * @param flightNumber
+     */
     public static void GetAndDisplayFlightByNumber(List<StateVector> stateVectors, String flightNumber) {
+        boolean isFound = false;
         for (StateVector s : stateVectors) {
             if (Integer.parseInt(s.getIcao24(), 16) == Integer.parseInt(flightNumber)) {
                 DisplayFlight(s);
+                isFound = true;
                 break;
             }
         }
+        if(!isFound){
+            System.out.println("Could not find flight number " + flightNumber);
+            return;
+        }
     }
 
+    /**
+     * compares the state name with the states and when a match is found displays all flights within its bounding box if none are found returns;
+     * @param realState
+     * @param stateVectors
+     * @param actualStates
+     */
     public static void GetAndDisplayFlightByState(String realState, List<StateVector> stateVectors, List<RealState> actualStates) {
         realState = realState.toLowerCase();
         RealState correctState = null;
-
+        boolean isFound = false;
         for (RealState state : actualStates) {
             if (state.GetName().equals(realState)) {
                 correctState = state;
+                isFound = true;
             }
+        }
+        if(!isFound){
+            System.out.println("Could not find state " + realState);
+            return;
         }
 
         for (StateVector s : stateVectors) {
@@ -89,6 +117,11 @@ public class Main {
         }
     }
 
+
+    /**
+     * Dispalys the given state Vector
+     * @param state
+     */
     public static void DisplayFlight(StateVector state) {
         System.out.println(Integer.parseInt(state.getIcao24(), 16) + " " + state.getCallsign());
         System.out.println("Latitude: " + state.getLatitude());
@@ -98,12 +131,23 @@ public class Main {
         System.out.println("------------------");
     }
 
+    /**
+     * gets the user input and returns a string
+     * @param messageToDisplay
+     * @param scanner
+     * @return
+     */
     public static String GetUserInput(String messageToDisplay, Scanner scanner) {
         System.out.print(messageToDisplay);
         String input = scanner.nextLine();
         return input;
     }
 
+    /**
+     * reads file, and returns a list of RealState with bounding boxes and names
+     * @param filePath
+     * @return
+     */
     public static List<RealState> GetStatesFromCSV(String filePath) {
         List<String> lines = ReadFromFile(filePath);
         List<RealState> states = new ArrayList<>();
@@ -121,6 +165,11 @@ public class Main {
         return states;
     }
 
+    /**
+     * reads from a file path and returns list of strings
+     * @param filePath
+     * @return
+     */
     public static List<String> ReadFromFile(String filePath) {
         List<String> lines = new ArrayList<>();
         try {
