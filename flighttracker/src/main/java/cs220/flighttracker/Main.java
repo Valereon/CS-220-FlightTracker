@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.print.DocFlavor.READER;
-import javax.swing.plaf.nimbus.State;
 
 import org.opensky.api.OpenSkyApi;
 import org.opensky.model.StateVector;
@@ -39,25 +37,29 @@ public class Main {
 
             List<RealState> actualStates = GetStatesFromCSV("src/main/java/cs220/flighttracker/boundingBoxes.csv");
 
-            String out = "0";
-            while (!out.equals("1") && !out.equals("2")) {
-                System.out.println("What would you like to search by:");
-                System.out.println("1. Flight Number");
-                System.out.println("2. Departing State / current state");
-                out = GetUserInput("> ", scanner);
-            }
-
-            if (out.equals("1")) {
-                String flightNumber = GetUserInput("Enter a flight number : ", scanner);
-                GetAndDisplayFlightByNumber(stateVectors, flightNumber);
-
-            } else {
-                String realState = GetUserInput("Please enter one of the 50 us states", scanner);
-                GetAndDisplayFlightByState(realState, stateVectors, actualStates);
-            }
+            UserSearchAndDisplay(scanner, stateVectors, actualStates);
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void UserSearchAndDisplay(Scanner scanner, List<StateVector> stateVectors, List<RealState> actualStates) {
+        String out = "0";
+        while (!out.equals("1") && !out.equals("2")) {
+            System.out.println("What would you like to search by:");
+            System.out.println("1. Flight Number");
+            System.out.println("2. Departing State / current state");
+            out = GetUserInput("> ", scanner);
+        }
+
+        if (out.equals("1")) {
+            String flightNumber = GetUserInput("Enter a flight number : ", scanner);
+            GetAndDisplayFlightByNumber(stateVectors, flightNumber);
+
+        } else {
+            String realState = GetUserInput("Please enter one of the 50 us states", scanner);
+            GetAndDisplayFlightByState(realState, stateVectors, actualStates);
         }
     }
 
@@ -70,8 +72,7 @@ public class Main {
         }
     }
 
-    public static void GetAndDisplayFlightByState(String realState, List<StateVector> stateVectors,
-            List<RealState> actualStates) {
+    public static void GetAndDisplayFlightByState(String realState, List<StateVector> stateVectors, List<RealState> actualStates) {
         realState = realState.toLowerCase();
         RealState correctState = null;
 
@@ -98,7 +99,7 @@ public class Main {
     }
 
     public static String GetUserInput(String messageToDisplay, Scanner scanner) {
-        System.out.println(messageToDisplay);
+        System.out.print(messageToDisplay);
         String input = scanner.nextLine();
         return input;
     }
