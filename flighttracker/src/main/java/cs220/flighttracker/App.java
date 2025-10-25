@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
 import org.opensky.api.OpenSkyApi;
 import org.opensky.model.StateVector;
 import org.opensky.model.OpenSkyStates;
@@ -19,10 +18,11 @@ import org.opensky.model.OpenSkyStates;
  * @author Malayna Vest
  * @author Litzy Garcia
  */
-public class Main {
+public class App {
 
-    public static void main(String[] args) {
-        OpenSkyApi api = new OpenSkyApi(); //anon access
+    public void Run() {
+        OpenSkyApi api = new OpenSkyApi(); // anon access
+        Scanner scanner = new Scanner(System.in);
 
         try {
             // Define parameters
@@ -43,12 +43,15 @@ public class Main {
     }
 
     /**
-     * Displays a menu for the user to use, and then based on their answer will display flights by flight number or by state
+     * Displays a menu for the user to use, and then based on their answer will
+     * display flights by flight number or by state
+     * 
      * @param scanner
      * @param stateVectors
      * @param actualStates
      */
-    private static void UserSearchAndDisplay(Scanner scanner, List<StateVector> stateVectors, List<RealState> actualStates) {
+    private static void UserSearchAndDisplay(Scanner scanner, List<StateVector> stateVectors,
+            List<RealState> actualStates) {
         String out = "0";
         while (!out.equals("1") && !out.equals("2")) {
             System.out.println("What would you like to search by:");
@@ -69,6 +72,7 @@ public class Main {
 
     /**
      * Gets and displays flight by number
+     * 
      * @param stateVectors
      * @param flightNumber
      */
@@ -81,19 +85,22 @@ public class Main {
                 break;
             }
         }
-        if(!isFound){
+        if (!isFound) {
             System.out.println("Could not find flight number " + flightNumber);
             return;
         }
     }
 
     /**
-     * compares the state name with the states and when a match is found displays all flights within its bounding box if none are found returns;
+     * compares the state name with the states and when a match is found displays
+     * all flights within its bounding box if none are found returns;
+     * 
      * @param realState
      * @param stateVectors
      * @param actualStates
      */
-    public static void GetAndDisplayFlightByState(String realState, List<StateVector> stateVectors, List<RealState> actualStates) {
+    public static void GetAndDisplayFlightByState(String realState, List<StateVector> stateVectors,
+            List<RealState> actualStates) {
         realState = realState.toLowerCase();
         RealState correctState = null;
         boolean isFound = false;
@@ -103,7 +110,7 @@ public class Main {
                 isFound = true;
             }
         }
-        if(!isFound){
+        if (!isFound) {
             System.out.println("Could not find state " + realState);
             return;
         }
@@ -115,9 +122,9 @@ public class Main {
         }
     }
 
-
     /**
      * Dispalys the given state Vector
+     * 
      * @param state
      */
     public static void DisplayFlight(StateVector state) {
@@ -131,6 +138,7 @@ public class Main {
 
     /**
      * gets the user input and returns a string
+     * 
      * @param messageToDisplay
      * @param scanner
      * @return
@@ -143,6 +151,7 @@ public class Main {
 
     /**
      * reads file, and returns a list of RealState with bounding boxes and names
+     * 
      * @param filePath
      * @return
      */
@@ -165,6 +174,7 @@ public class Main {
 
     /**
      * reads from a file path and returns list of strings
+     * 
      * @param filePath
      * @return
      */
