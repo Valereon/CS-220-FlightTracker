@@ -19,7 +19,6 @@ import org.opensky.model.OpenSkyStates;
  * @author Litzy Garcia
  */
 public class App {
-
     public void Run() {
         OpenSkyApi api = new OpenSkyApi(); // anon access
         Scanner scanner = new Scanner(System.in);
@@ -61,11 +60,13 @@ public class App {
         }
 
         if (out.equals("1")) {
-            String flightNumber = GetUserInput("Enter a flight number : ", scanner);
+            System.out.println("Enter a flight number: ");
+            String flightNumber = GetUserInput("> ", scanner);
             GetAndDisplayFlightByNumber(stateVectors, flightNumber);
 
         } else {
-            String realState = GetUserInput("Please enter one of the 50 us state\n>", scanner);
+            System.out.println("Please enter one of the 50 us state : ");
+            String realState = GetUserInput("> ", scanner);
             GetAndDisplayFlightByState(realState, stateVectors, actualStates);
         }
     }
@@ -116,9 +117,14 @@ public class App {
         }
 
         for (StateVector s : stateVectors) {
-            if (correctState.isInsideBbox(s.getLatitude(), s.getLongitude())) {
-                DisplayFlight(s);
+            try{
+                if (correctState.isInsideBbox(s.getLatitude(), s.getLongitude())) {
+                    DisplayFlight(s);
+                }
+            }catch(NullPointerException e){
+                continue;
             }
+
         }
     }
 
