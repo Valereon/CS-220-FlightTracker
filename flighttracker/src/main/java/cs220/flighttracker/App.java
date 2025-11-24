@@ -19,6 +19,10 @@ import org.opensky.model.OpenSkyStates;
  * @author Litzy Garcia
  */
 public class App {
+
+    private List<StateVector> stateVectors;
+    private List<RealState> actualStates;
+
     public void Run() {
         OpenSkyApi api = new OpenSkyApi(); // anon access
         Scanner scanner = new Scanner(System.in);
@@ -32,9 +36,8 @@ public class App {
             OpenSkyStates states = api.getStates(time, icao24, bbox);
             List<StateVector> stateVectors = (List<StateVector>) states.getStates();
 
-            List<RealState> actualStates = GetStatesFromCSV("src/main/java/cs220/flighttracker/boundingBoxes.csv");
+            List<RealState> actualStates = GetStatesFromCSV("CS-220-FlightTracker/flighttracker/src/main/java/cs220/flighttracker/boundingBoxes.csv");
 
-            UserSearchAndDisplay(scanner, stateVectors, actualStates);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,6 +202,15 @@ public class App {
             e.printStackTrace();
         }
         return lines;
+    }
+    
+
+    public List<StateVector> getStateVectors() {
+        return stateVectors;
+    }
+
+    public List<RealState> getActualStates() {
+        return actualStates;
     }
 
 }
