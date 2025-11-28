@@ -23,6 +23,10 @@ public class App {
     private List<StateVector> stateVectors;
     private List<RealState> actualStates;
 
+    private View view;
+/**
+ * Loads initial flight data
+ */
     public void Run() {
         OpenSkyApi api = new OpenSkyApi(); // anon access
         Scanner scanner = new Scanner(System.in);
@@ -34,10 +38,10 @@ public class App {
             OpenSkyApi.BoundingBox bbox = null; // null = no bounding box (aka geographical state vector)
 
             OpenSkyStates states = api.getStates(time, icao24, bbox);
-            List<StateVector> stateVectors = (List<StateVector>) states.getStates();
-
-            List<RealState> actualStates = GetStatesFromCSV("CS-220-FlightTracker/flighttracker/src/main/java/cs220/flighttracker/boundingBoxes.csv");
-
+            this.stateVectors = (List<StateVector>) states.getStates();
+            this.actualStates = GetStatesFromCSV(
+            "CS-220-FlightTracker/flighttracker/src/main/java/cs220/flighttracker/boundingBoxes.csv"
+        );
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,48 +56,37 @@ public class App {
      * @param stateVectors
      * @param actualStates
      */
-    private static void UserSearchAndDisplay(Scanner scanner, List<StateVector> stateVectors,
-            List<RealState> actualStates) {
-        String out = "0";
-        while (!out.equals("1") && !out.equals("2")) {
-            System.out.println("What would you like to search by:");
-            System.out.println("1. Flight Number");
-            System.out.println("2. Departing State / current state");
-            out = GetUserInput("> ", scanner);
-        }
-
-        if (out.equals("1")) {
-            System.out.println("Enter a flight number: ");
-            String flightNumber = GetUserInput("> ", scanner);
-            GetAndDisplayFlightByNumber(stateVectors, flightNumber);
-
-        } else {
-            System.out.println("Please enter one of the 50 us state : ");
-            String realState = GetUserInput("> ", scanner);
-            GetAndDisplayFlightByState(realState, stateVectors, actualStates);
-        }
-    }
+    
 
     /**
      * Gets and displays flight by number
      * 
      * @param stateVectors
      * @param flightNumber
+     * @return string of the flight data
      */
-    public static void GetAndDisplayFlightByNumber(List<StateVector> stateVectors, String flightNumber) {
+    public String GetAndDisplayFlightByNumber(List<StateVector> stateVectors, String flightNumber) {
         boolean isFound = false;
+        StringBuilder sb = new StringBuilder();
         for (StateVector s : stateVectors) {
-            if (Integer.parseInt(s.getIcao24(), 16) == Integer.parseInt(flightNumber)) {
-                DisplayFlight(s);
+            if (s.getCallsign() != null && s.getCallsign().trim().equalsIgnoreCase(flightNumber.trim())) {
+                
+            sb.append("Callsign: ").append(s.getCallsign()).append("\n");
+            sb.append("Latitude: ").append(s.getLatitude()).append("\n");
+            sb.append("Longitude: ").append(s.getLongitude()).append("\n");
+            sb.append("Altitude: ").append(s.getGeoAltitude()).append("\n");
+            sb.append("Velocity: ").append(s.getVelocity()).append("\n");
+            sb.append("-------------------\n");
+
                 isFound = true;
-                break;
             }
         }
-        if (!isFound) {
-            System.out.println("Could not find flight number " + flightNumber);
-            return;
-        }
+
+    if (!isFound) {
+        return ("Could not find flight number " + flightNumber);
     }
+    return sb.toString();
+}
 
     /**
      * compares the state name with the states and when a match is found displays
@@ -102,11 +95,13 @@ public class App {
      * @param realState
      * @param stateVectors
      * @param actualStates
+     * @return the string of the flights found
      */
-    public static void GetAndDisplayFlightByState(String realState, List<StateVector> stateVectors,
+    public String GetAndDisplayFlightByState(String realState, List<StateVector> stateVectors,
             List<RealState> actualStates) {
         realState = realState.toLowerCase();
         RealState correctState = null;
+        StringBuilder sb = new StringBuilder();
         boolean isFound = false;
         for (RealState state : actualStates) {
             if (state.GetName().equals(realState)) {
@@ -115,48 +110,48 @@ public class App {
             }
         }
         if (!isFound) {
-            System.out.println("Could not find state " + realState);
-            return;
+            return("Could not find state " + realState);
         }
 
         for (StateVector s : stateVectors) {
             try{
                 if (correctState.isInsideBbox(s.getLatitude(), s.getLongitude())) {
-                    DisplayFlight(s);
+                    sb.append("ICAO: ").append(s.getIcao24()).append("\n");
+                sb.append("FLight: ").append(s.getCallsign()).append("\n");
+                sb.append("Latitude: ").append(s.getLatitude()).append("\n");
+                sb.append("Longitude: ").append(s.getLongitude()).append("\n");
+                sb.append("Altitude: ").append(s.getGeoAltitude()).append("\n");
+                sb.append("Velocity: ").append(s.getVelocity()).append("\n");
+                sb.append("-------------------\n");
                 }
             }catch(NullPointerException e){
                 continue;
             }
 
         }
+        return sb.toString();
     }
 
     /**
      * Dispalys the given state Vector
      * 
-     * @param state
      */
-    public static void DisplayFlight(StateVector state) {
-        System.out.println(Integer.parseInt(state.getIcao24(), 16) + " " + state.getCallsign());
-        System.out.println("Latitude: " + state.getLatitude());
-        System.out.println("Longitude: " + state.getLongitude());
-        System.out.println("Altitude: " + state.getGeoAltitude());
-        System.out.println("Velocity: " + state.getVelocity());
-        System.out.println("------------------");
-    }
+    public void DisplayFlight(StateVector state) {
+         StringBuilder sb = new StringBuilder();
+    sb.append("ICAO: ").append(state.getIcao24()).append("\n");
+    sb.append("Callsign: ").append(state.getCallsign()).append("\n");
+    sb.append("Latitude: ").append(state.getLatitude()).append("\n");
+    sb.append("Longitude: ").append(state.getLongitude()).append("\n");
+    sb.append("Altitude: ").append(state.getGeoAltitude()).append("\n");
+    sb.append("Velocity: ").append(state.getVelocity()).append("\n");
+    sb.append("------------------\n");
 
-    /**
-     * gets the user input and returns a string
-     * 
-     * @param messageToDisplay
-     * @param scanner
-     * @return
-     */
-    public static String GetUserInput(String messageToDisplay, Scanner scanner) {
-        System.out.print(messageToDisplay);
-        String input = scanner.nextLine();
-        return input;
+    if (view != null) {
+        view.displayInView(sb.toString());
     }
+}
+
+   
 
     /**
      * reads file, and returns a list of RealState with bounding boxes and names
@@ -213,4 +208,7 @@ public class App {
         return actualStates;
     }
 
+    public void setView(View view) {
+        this.view = view;
+    }
 }

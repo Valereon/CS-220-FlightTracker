@@ -24,6 +24,12 @@ public class View implements ActionListener {
 
     private JButton searchNumButton = new JButton("Flight number");
     private JButton searchStateButton = new JButton("Departing/Current State");
+    private JButton backButton = new JButton("Back");
+
+    private JTextArea output = new JTextArea(10,40);
+
+    private JScrollPane scroll = new JScrollPane(output);
+    
 
     private JTextField searchInput;
 
@@ -32,6 +38,7 @@ public class View implements ActionListener {
      public View(App app) {
 
         this.app = app;
+        app.setView(this);
         
         try {
             app.Run();
@@ -44,6 +51,7 @@ public class View implements ActionListener {
     inputPanel.add(searchStateButton);
 
     pane.add(inputPanel);
+    pane.add(scroll);
 
     frame.add(pane);
     frame.pack();
@@ -51,9 +59,14 @@ public class View implements ActionListener {
 
     searchNumButton.addActionListener(this);
     searchStateButton.addActionListener(this);
+    backButton.addActionListener(this);
     
      }
       @Override
+    /**
+     * Makes the buttons search buttons and back buttons work
+     * @param arg0 is the action event
+     */
 	public void actionPerformed(ActionEvent arg0) 
 	{
          if(arg0.getSource() == searchNumButton) {
@@ -61,20 +74,31 @@ public class View implements ActionListener {
             inputPanel.remove(searchNumButton);
             inputPanel.remove(searchStateButton);
 
+
             JTextField searchInput = new JTextField();
             searchInput.setPreferredSize(new Dimension(150, 25));
 
+            output.setText("");
+
+            JButton submit = new JButton("Search");
+
             inputPanel.add(searchInput);
+            inputPanel.add(submit);
+            inputPanel.add(backButton);
 
             searchLabel.setText("Enter the Flight Number: ");
 
             //Refreshes the GUI to display correctly
             inputPanel.revalidate();
             inputPanel.repaint();
+
+            //run this code when submit is pressed
+            submit.addActionListener(e -> { //e is event
+                String flightNumber = searchInput.getText();
+                String result = app.GetAndDisplayFlightByNumber(app.getStateVectors(), flightNumber);
+                displayInView(result);
+            });
             
-            String flightNumber = searchInput.getText();
-            App.GetAndDisplayFlightByNumber(app.getStateVectors(), flightNumber);
-    
          }
          if(arg0.getSource() == searchStateButton) {
 
@@ -84,7 +108,13 @@ public class View implements ActionListener {
             JTextField searchInput = new JTextField();
             searchInput.setPreferredSize(new Dimension(150, 25));
 
+            output.setText("");
+
+            JButton submit = new JButton("Search");
+
             inputPanel.add(searchInput);
+            inputPanel.add(submit);
+            inputPanel.add(backButton);
 
             searchLabel.setText("Enter a US state: ");
 
@@ -92,10 +122,30 @@ public class View implements ActionListener {
             inputPanel.revalidate();
             inputPanel.repaint();
 
+            submit.addActionListener(e -> {
             String statename = searchInput.getText();
-            
-            App.GetAndDisplayFlightByState(statename, app.getStateVectors(), app.getActualStates());
-    
+            String result = app.GetAndDisplayFlightByState(statename, app.getStateVectors(), app.getActualStates());
+            displayInView(result);
+            });
          }
+         if(arg0.getSource() == backButton) {
+            inputPanel.removeAll();
+            inputPanel.add(searchLabel);
+            inputPanel.add(searchNumButton);
+            inputPanel.add(searchStateButton);
+
+            searchLabel.setText("What would you like to search by?");
+
+            inputPanel.revalidate();
+            inputPanel.repaint();
+         }
+
     }
+    /**
+     * Displays the strings from methods in App to display in the GUI
+     * @param text
+     */
+    public void displayInView(String text) {
+    output.append(text + "\n");
+}
 }
